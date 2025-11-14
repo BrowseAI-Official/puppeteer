@@ -17,6 +17,8 @@ import {WindowRealm} from './Realm.js';
 import {Request} from './Request.js';
 import type {UserContext} from './UserContext.js';
 import {UserPrompt} from './UserPrompt.js';
+import {assert} from '../../util/assert.js';
+import {isString} from '../../common/util.js';
 
 /**
  * @internal
@@ -743,6 +745,22 @@ export class BrowsingContext extends EventEmitter<{
   async setUserAgent(userAgent: string | null): Promise<void> {
     await this.#session.send('emulation.setUserAgentOverride', {
       userAgent,
+      contexts: [this.id],
+    });
+  }
+
+  async setExtraHTTPHeaders(headers: Record<string, string>): Promise<void> {
+    await this.#session.send('network.setExtraHeaders', {
+      headers: Object.entries(headers).map(([key, value])=>{
+        assert(
+          isString(value),
+          `Expected value of header "${key}" to be String, but "${typeof value}" is found.`,
+        );
+
+        return {
+        name: key,
+        value: {type: 'string', value: value}
+      }}),
       contexts: [this.id],
     });
   }
