@@ -7,6 +7,8 @@
 import type * as Bidi from 'webdriver-bidi-protocol';
 
 import {EventEmitter} from '../../common/EventEmitter.js';
+import {isString} from '../../common/util.js';
+import {assert} from '../../util/assert.js';
 import {inertIfDisposed, throwIfDisposed} from '../../util/decorators.js';
 import {DisposableStack, disposeSymbol} from '../../util/disposable.js';
 
@@ -17,8 +19,6 @@ import {WindowRealm} from './Realm.js';
 import {Request} from './Request.js';
 import type {UserContext} from './UserContext.js';
 import {UserPrompt} from './UserPrompt.js';
-import {assert} from '../../util/assert.js';
-import {isString} from '../../common/util.js';
 
 /**
  * @internal
@@ -751,16 +751,17 @@ export class BrowsingContext extends EventEmitter<{
 
   async setExtraHTTPHeaders(headers: Record<string, string>): Promise<void> {
     await this.#session.send('network.setExtraHeaders', {
-      headers: Object.entries(headers).map(([key, value])=>{
+      headers: Object.entries(headers).map(([key, value]) => {
         assert(
           isString(value),
           `Expected value of header "${key}" to be String, but "${typeof value}" is found.`,
         );
 
         return {
-        name: key,
-        value: {type: 'string', value: value}
-      }}),
+          name: key,
+          value: {type: 'string', value: value},
+        };
+      }),
       contexts: [this.id],
     });
   }
