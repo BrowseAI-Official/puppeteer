@@ -20,6 +20,7 @@ import {DisposableStack} from '../util/disposable.js';
 import {isErrorLike} from '../util/ErrorLike.js';
 
 import {isTargetClosedError} from './Connection.js';
+import {FetchRequestPaused} from './FetchRequestPaused.js';
 import {CdpHTTPRequest} from './HTTPRequest.js';
 import {CdpHTTPResponse} from './HTTPResponse.js';
 import {
@@ -422,6 +423,10 @@ export class NetworkManager extends EventEmitter<NetworkManagerEvents> {
     client: CDPSession,
     event: Protocol.Fetch.RequestPausedEvent,
   ): void {
+    // Emit wrapped event immediately, before any processing
+    const pausedRequest = new FetchRequestPaused(client, event);
+    this.emit(NetworkManagerEvent.RequestPaused, pausedRequest);
+
     if (
       !this.#userRequestInterceptionEnabled &&
       this.#protocolRequestInterceptionEnabled

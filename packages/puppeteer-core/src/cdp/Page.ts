@@ -212,6 +212,9 @@ export class CdpPage extends Page {
     networkManagerEmitter.on(NetworkManagerEvent.RequestFinished, request => {
       this.emit(PageEvent.RequestFinished, request);
     });
+    networkManagerEmitter.on(NetworkManagerEvent.RequestPaused, event => {
+      this.emit(PageEvent.RequestPaused, event);
+    });
 
     this.#tabTargetClient.on(
       CDPSessionEvent.Swapped,

@@ -31,6 +31,7 @@ import {
 import type {HTTPRequest} from '../api/HTTPRequest.js';
 import type {HTTPResponse} from '../api/HTTPResponse.js';
 import type {Accessibility} from '../cdp/Accessibility.js';
+import type {FetchRequestPaused} from '../cdp/FetchRequestPaused.js';
 import type {Coverage} from '../cdp/Coverage.js';
 import type {NetworkConditions} from '../cdp/NetworkManager.js';
 import type {Tracing} from '../cdp/Tracing.js';
@@ -567,6 +568,19 @@ export const enum PageEvent {
    */
   RequestFinished = 'requestfinished',
   /**
+   * Emitted when a request is paused by the Fetch domain. Contains a
+   * {@link FetchRequestPaused} object that provides methods to continue,
+   * abort, or respond to the request.
+   *
+   * @remarks
+   * This event is emitted immediately when CDP sends `Fetch.requestPaused`,
+   * without waiting for the corresponding `Network.requestWillBeSent` event.
+   * This allows users to access request information as early as possible.
+   * The event only fires when request interception is enabled via
+   * `Page.setRequestInterception()`.
+   */
+  RequestPaused = 'requestpaused',
+  /**
    * Emitted when a response is received. Contains a {@link HTTPResponse}.
    */
   Response = 'response',
@@ -609,6 +623,7 @@ export interface PageEvents extends Record<EventType, unknown> {
   [PageEvent.Response]: HTTPResponse;
   [PageEvent.RequestFailed]: HTTPRequest;
   [PageEvent.RequestFinished]: HTTPRequest;
+  [PageEvent.RequestPaused]: FetchRequestPaused;
   [PageEvent.RequestServedFromCache]: HTTPRequest;
   [PageEvent.WorkerCreated]: WebWorker;
   [PageEvent.WorkerDestroyed]: WebWorker;

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import type {FetchRequestPaused} from '../cdp/FetchRequestPaused.js';
 import type {HTTPRequest} from '../api/HTTPRequest.js';
 import type {HTTPResponse} from '../api/HTTPResponse.js';
 
@@ -24,6 +25,7 @@ export namespace NetworkManagerEvent {
   export const Response = Symbol('NetworkManager.Response');
   export const RequestFailed = Symbol('NetworkManager.RequestFailed');
   export const RequestFinished = Symbol('NetworkManager.RequestFinished');
+  export const RequestPaused = Symbol('NetworkManager.RequestPaused');
 }
 
 /**
@@ -35,4 +37,5 @@ export interface NetworkManagerEvents extends Record<EventType, unknown> {
   [NetworkManagerEvent.Response]: HTTPResponse;
   [NetworkManagerEvent.RequestFailed]: HTTPRequest;
   [NetworkManagerEvent.RequestFinished]: HTTPRequest;
+  [NetworkManagerEvent.RequestPaused]: FetchRequestPaused;
 }

@@ -22,6 +22,7 @@ export * from './ExecutionContext.js';
 export * from './ExtensionTransport.js';
 export * from './Frame.js';
 export * from './FrameManager.js';
+export * from './FetchRequestPaused.js';
 export * from './FrameManagerEvents.js';
 export * from './FrameTree.js';
 export * from './HTTPRequest.js';
