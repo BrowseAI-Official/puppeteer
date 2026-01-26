@@ -423,8 +423,12 @@ export class NetworkManager extends EventEmitter<NetworkManagerEvents> {
     client: CDPSession,
     event: Protocol.Fetch.RequestPausedEvent,
   ): void {
+    const frame = event.frameId
+      ? this.#frameManager.frame(event.frameId)
+      : null;
+
     // Emit wrapped event immediately, before any processing
-    const pausedRequest = new FetchRequestPaused(client, event);
+    const pausedRequest = new FetchRequestPaused(client, frame, event);
     this.emit(NetworkManagerEvent.RequestPaused, pausedRequest);
 
     if (

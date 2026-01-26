@@ -7,6 +7,7 @@
 import type {Protocol} from 'devtools-protocol';
 
 import type {CDPSession} from '../api/CDPSession.js';
+import type {Frame} from '../api/Frame.js';
 import {
   type ContinueRequestOverrides,
   headersArray,
@@ -14,6 +15,7 @@ import {
   type ResponseForRequest,
   STATUS_TEXTS,
   handleError,
+  type ResourceType,
 } from '../api/HTTPRequest.js';
 import {stringToBase64} from '../util/encoding.js';
 
@@ -24,14 +26,20 @@ import {stringToBase64} from '../util/encoding.js';
  */
 export class FetchRequestPaused {
   readonly #client: CDPSession;
+  readonly #frame: Frame | null;
   readonly #event: Protocol.Fetch.RequestPausedEvent;
   #handled = false;
 
   /**
    * @internal
    */
-  constructor(client: CDPSession, event: Protocol.Fetch.RequestPausedEvent) {
+  constructor(
+    client: CDPSession,
+    frame: Frame | null,
+    event: Protocol.Fetch.RequestPausedEvent,
+  ) {
     this.#client = client;
+    this.#frame = frame;
     this.#event = event;
   }
 
@@ -66,15 +74,15 @@ export class FetchRequestPaused {
   /**
    * The frame ID that initiated the request.
    */
-  get frameId(): Protocol.Page.FrameId | undefined {
-    return this.#event.frameId;
+  get frame(): Frame | null {
+    return this.#frame;
   }
 
   /**
    * The resource type.
    */
-  get resourceType(): Protocol.Network.ResourceType {
-    return this.#event.resourceType;
+  get resourceType(): ResourceType {
+    return this.#event.resourceType.toLowerCase() as ResourceType;
   }
 
   /**
